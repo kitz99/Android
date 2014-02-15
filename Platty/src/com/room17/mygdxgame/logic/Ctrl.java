@@ -14,12 +14,12 @@ public class Ctrl implements Disposable {
 	private Drawable touchBackground;
 	private Drawable touchKnob;
 
-	Texture a;
-	Texture b;
+	private Texture a;
+	private Texture b;
 
 	public Ctrl() {
 		touchpadSkin = new Skin();
-		Texture a = new Texture("data/touchBackground.png");
+		a = new Texture("data/touchBackground.png");
 		b = new Texture("data/touchKnob.png");
 		touchpadSkin.add("touchBackground", a);
 		touchpadSkin.add("touchKnob", b);

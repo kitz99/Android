@@ -195,6 +195,11 @@ public class Player implements Disposable {
 				right = (a > 0);
 			}
 		}
+		if (b < 0 && stat == State.JUMP) {
+			if (a != 0) {
+				right = (a > 0);
+			}
+		}
 		if (canJump && a == 0 && stat != State.STAND) {
 			time = 0;
 			stat = State.STAND;
