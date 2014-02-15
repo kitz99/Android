@@ -26,6 +26,7 @@ public class Test implements Screen {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		float d = Gdx.graphics.getDeltaTime();
+		play.update(d, myCtrl.getX(), myCtrl.getY());
 		camera.position.x = play.getX();
 		camera.update();
 
@@ -38,7 +39,6 @@ public class Test implements Screen {
 
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
-		System.out.println(d);
 	}
 
 	@Override

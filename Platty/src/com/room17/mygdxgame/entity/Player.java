@@ -1,7 +1,5 @@
 package com.room17.mygdxgame.entity;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -27,9 +25,9 @@ public class Player implements Disposable {
 	
 	private float time;
 	
-	private ArrayList<Disposable> myDestr;
-	
 	private TiledMapTileLayer collisionLayer;
+	
+	Texture pText;
 
 	public Player(float a, float b, TiledMapTileLayer aux) {
 		int row = 9, col = 6;
@@ -37,9 +35,7 @@ public class Player implements Disposable {
 		X = a;
 		Y = b;
 		collisionLayer = aux;
-		myDestr = new ArrayList<Disposable>();
-		Texture pText = new Texture("sprites/sumoHulk.png");
-		myDestr.add(pText);
+		pText = new Texture("sprites/sumoHulk.png");
 		TextureRegion[][] myArr = TextureRegion.split(pText, pText.getWidth()
 				/ col, pText.getHeight() / row);
 		
@@ -133,22 +129,26 @@ public class Player implements Disposable {
 		}
 		
 		// clamp velocity
-		if (velocity.y > speed)
+		if (velocity.y > speed) {
 			velocity.y = speed;
-		else if (velocity.y < -speed)
+		} else if (velocity.y < -speed) {
 			velocity.y = -speed;
-
+		}
 		// save old position
 		float oldX = getX(), oldY = getY();
 		boolean collisionX = false, collisionY = false;
 
 		// move on x
 		setX(getX() + velocity.x * delta);
-
-		if (velocity.x < 0) // going left
+		if (velocity.x < 0) {// going left
 			collisionX = collidesLeft();
-		else if (velocity.x > 0) // going right
+			right = false;
+		} else if (velocity.x > 0) {// going right
 			collisionX = collidesRight();
+			right = true;
+		} else {
+			stat = State.STAND;
+		}
 
 		// react to x collision
 		if (collisionX) {
@@ -159,11 +159,15 @@ public class Player implements Disposable {
 		// move on y
 		setY(getY() + velocity.y * delta * 5f);
 
-		if (velocity.y < 0) // going down
+		if (velocity.y < 0) {// going down
 			canJump = collisionY = collidesBottom();
-		else if (velocity.y > 0) // going up
+			if (!canJump) {
+				stat = State.FALL;
+			}
+		} else if (velocity.y > 0) {// going up
 			collisionY = collidesTop();
-
+			stat = State.JUMP;
+		}
 		// react to y collision
 		if (collisionY) {
 			setY(oldY);
@@ -199,9 +203,7 @@ public class Player implements Disposable {
 
 	@Override
 	public void dispose() {
-		for(Disposable each : myDestr) {
-			each.dispose();
-		}
+		pText.dispose();
 	}
 
 	public void draw(Batch batch) {

@@ -1,7 +1,5 @@
 package com.room17.mygdxgame.logic;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
@@ -16,15 +14,13 @@ public class Ctrl implements Disposable {
 	private Drawable touchBackground;
 	private Drawable touchKnob;
 
-	private ArrayList<Disposable> myDestr;
+	Texture a;
+	Texture b;
 
 	public Ctrl() {
-		myDestr = new ArrayList<Disposable>();
 		touchpadSkin = new Skin();
-		Texture a = new Texture("data/touchBackground.png"), b = new Texture(
-				"data/touchKnob.png");
-		myDestr.add(a);
-		myDestr.add(b);
+		Texture a = new Texture("data/touchBackground.png");
+		b = new Texture("data/touchKnob.png");
 		touchpadSkin.add("touchBackground", a);
 		touchpadSkin.add("touchKnob", b);
 		touchpadStyle = new TouchpadStyle();
@@ -50,8 +46,7 @@ public class Ctrl implements Disposable {
 
 	@Override
 	public void dispose() {
-		for(Disposable each : myDestr) {
-			each.dispose();
-		}
+		a.dispose();
+		b.dispose();
 	}
 }
