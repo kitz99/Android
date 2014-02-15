@@ -12,23 +12,23 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 public class Player implements Disposable {
-	
+
 	private float HEIGHT = 32f, WIDTH = 32f;
 	private float speed = 60 * 2, gravity = 60 * 1.8f;
 	private float X, Y;
 	boolean canJump, right;
 	private Vector2 velocity;
 	private State stat;
-	
+
 	private Animation idle;
 	private Animation walk;
 	private Animation jump;
 	private Animation fall;
-	
+
 	private float time;
-	
+
 	private TiledMapTileLayer collisionLayer;
-	
+
 	private Texture pText;
 
 	public Player(float a, float b, TiledMapTileLayer aux) {
@@ -40,38 +40,38 @@ public class Player implements Disposable {
 		pText = new Texture("sprites/sumoHulk.png");
 		TextureRegion[][] myArr = TextureRegion.split(pText, pText.getWidth()
 				/ col, pText.getHeight() / row);
-		
+
 		TextureRegion[] myV = new TextureRegion[4];
-		for(int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			myV[i] = myArr[0][i];
 		}
 		idle = new Animation(rate, myV);
 		idle.setPlayMode(Animation.LOOP);
-		
+
 		myV = new TextureRegion[6];
-		for(int i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i++) {
 			myV[i] = myArr[1][i];
 		}
 		walk = new Animation(rate, myV);
 		walk.setPlayMode(Animation.LOOP);
-		
+
 		myV = new TextureRegion[3];
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			myV[i] = myArr[2][i];
 		}
 		jump = new Animation(rate, myV);
 		jump.setPlayMode(Animation.LOOP);
-		
+
 		myV = new TextureRegion[3];
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			myV[i] = myArr[3][i];
 		}
 		fall = new Animation(rate, myV);
 		fall.setPlayMode(Animation.LOOP);
-		
+
 		canJump = true;
 		right = true;
-		
+
 		velocity = new Vector2();
 		stat = State.STAND;
 		time = 0;
@@ -81,8 +81,8 @@ public class Player implements Disposable {
 		Cell cell = collisionLayer.getCell(
 				(int) (x / collisionLayer.getTileWidth()),
 				(int) (y / collisionLayer.getTileHeight()));
-		return cell != null && cell.getTile() != null;
-				//&& cell.getTile().getProperties().containsKey("blocked");
+		return cell != null && cell.getTile() != null
+				&& cell.getTile().getProperties().containsKey("blocked");
 	}
 
 	private boolean rightCol() {
@@ -121,11 +121,11 @@ public class Player implements Disposable {
 		if (canJump && Gdx.input.isKeyPressed(Keys.SPACE)) {
 			velocity.y = speed / 1.7f;
 			canJump = false;
-		} 
+		}
 		if (x != 0) {
 			velocity.x = speed * x;
 		}
-		
+
 		if (velocity.y > speed) {
 			velocity.y = speed;
 		} else if (velocity.y < -speed) {
@@ -142,7 +142,7 @@ public class Player implements Disposable {
 		} else if (velocity.x > 0) {
 			collisionX = rightCol();
 		}
-		
+
 		if (collisionX) {
 			setX(oldX);
 			velocity.x = 0;
@@ -160,9 +160,9 @@ public class Player implements Disposable {
 			setY(oldY);
 			velocity.y = 0;
 		}
-		
+
 		velocity.x = 0;
-		
+
 		if (a > 0 && canJump && b < 0) {
 			if (stat != State.WALK || !right) {
 				stat = State.WALK;
@@ -177,15 +177,15 @@ public class Player implements Disposable {
 				time = 0;
 			}
 		}
-		//if (b < 0 && !canJump) {
-		//	if (stat != State.FALL) {
-		//		time = 0;
-		//		stat = State.FALL;
-		//	}
-		//	if (a != 0) {
-		//		right = (a > 0);
-		//	}
-		//}
+		// if (b < 0 && !canJump) {
+		// if (stat != State.FALL) {
+		// time = 0;
+		// stat = State.FALL;
+		// }
+		// if (a != 0) {
+		// right = (a > 0);
+		// }
+		// }
 		if (b > 0) {
 			if (stat != State.JUMP) {
 				time = 0;
@@ -208,11 +208,11 @@ public class Player implements Disposable {
 	private void setX(float f) {
 		X = f;
 	}
-	
+
 	public float getX() {
 		return X;
 	}
-	
+
 	private float getY() {
 		return Y;
 	}
@@ -232,7 +232,7 @@ public class Player implements Disposable {
 
 	public void draw(Batch batch) {
 		TextureRegion frame = null;
-		switch(stat) {
+		switch (stat) {
 		case STAND:
 			frame = idle.getKeyFrame(time);
 			break;
@@ -246,11 +246,11 @@ public class Player implements Disposable {
 			frame = jump.getKeyFrame(time);
 			break;
 		}
-		if(right) {
+		if (right) {
 			batch.draw(frame, X, Y, WIDTH, HEIGHT);
 		} else {
 			batch.draw(frame, X + WIDTH, Y, -WIDTH, HEIGHT);
 		}
 	}
-	
+
 }
