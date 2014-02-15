@@ -75,7 +75,7 @@ public class Player implements Disposable {
 		time = 0;
 	}
 
-	private boolean isCellBlocked(float x, float y) {
+	private boolean isBlocked(float x, float y) {
 		Cell cell = collisionLayer.getCell(
 				(int) (x / collisionLayer.getTileWidth()),
 				(int) (y / collisionLayer.getTileHeight()));
@@ -83,35 +83,31 @@ public class Player implements Disposable {
 				//&& cell.getTile().getProperties().containsKey("blocked");
 	}
 
-	private boolean collidesRight() {
+	private boolean rightCol() {
 		for (float step = 0; step < getHeight(); step += 1f)
-			//step += collisionLayer.getTileHeight() / 2)
-			if (isCellBlocked(getX() + getWidth(), getY() + step))
+			if (isBlocked(getX() + getWidth(), getY() + step))
 				return true;
 		return false;
 	}
 
-	private boolean collidesLeft() {
+	private boolean leftCol() {
 		for (float step = 0; step < getHeight(); step += 1f)
-			//step += collisionLayer.getTileHeight() / 2)
-			if (isCellBlocked(getX(), getY() + step))
+			if (isBlocked(getX(), getY() + step))
 				return true;
 		return false;
 	}
 
-	private boolean collidesTop() {
+	private boolean upCol() {
 		for (float step = 0; step < getWidth(); step += 1f)
-			//step += collisionLayer.getTileWidth() / 2)
-			if (isCellBlocked(getX() + step, getY() + getHeight()))
+			if (isBlocked(getX() + step, getY() + getHeight()))
 				return true;
 		return false;
 
 	}
 
-	private boolean collidesBottom() {
+	private boolean downCol() {
 		for (float step = 0; step < getWidth(); step += 1f)
-			//step += collisionLayer.getTileWidth() / 2)
-			if (isCellBlocked(getX() + step, getY()))
+			if (isBlocked(getX() + step, getY()))
 				return true;
 		return false;
 	}
@@ -128,47 +124,44 @@ public class Player implements Disposable {
 			velocity.x = speed * x;
 		}
 		
-		// clamp velocity
 		if (velocity.y > speed) {
 			velocity.y = speed;
 		} else if (velocity.y < -speed) {
 			velocity.y = -speed;
 		}
-		// save old position
+
 		float oldX = getX(), oldY = getY();
 		boolean collisionX = false, collisionY = false;
 
-		// move on x
+
 		setX(getX() + velocity.x * delta);
-		if (velocity.x < 0) {// going left
-			collisionX = collidesLeft();
+		if (velocity.x < 0) {
+			collisionX = leftCol();
 			right = false;
-		} else if (velocity.x > 0) {// going right
-			collisionX = collidesRight();
+		} else if (velocity.x > 0) {
+			collisionX = rightCol();
 			right = true;
 		} else {
 			stat = State.STAND;
 		}
 
-		// react to x collision
 		if (collisionX) {
 			setX(oldX);
 			velocity.x = 0;
 		}
 
-		// move on y
 		setY(getY() + velocity.y * delta * 5f);
 
-		if (velocity.y < 0) {// going down
-			canJump = collisionY = collidesBottom();
+		if (velocity.y < 0) {
+			canJump = collisionY = downCol();
 			if (!canJump) {
 				stat = State.FALL;
 			}
-		} else if (velocity.y > 0) {// going up
-			collisionY = collidesTop();
+		} else if (velocity.y > 0) {
+			collisionY = upCol();
 			stat = State.JUMP;
 		}
-		// react to y collision
+
 		if (collisionY) {
 			setY(oldY);
 			velocity.y = 0;
