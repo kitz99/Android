@@ -1,5 +1,7 @@
 package com.room17.mygdxgame.entity;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -27,7 +29,7 @@ public class Player implements Disposable {
 	
 	private TiledMapTileLayer collisionLayer;
 	
-	Texture pText;
+	private Texture pText;
 
 	public Player(float a, float b, TiledMapTileLayer aux) {
 		int row = 9, col = 6;
@@ -116,10 +118,10 @@ public class Player implements Disposable {
 		time += delta;
 		velocity.y -= gravity * delta;
 
-		//if (canJump) {
-			//velocity.y = speed / 1.7f;
-			//canJump = false;
-		//} 
+		if (canJump && Gdx.input.isKeyPressed(Keys.SPACE)) {
+			velocity.y = speed / 1.7f;
+			canJump = false;
+		} 
 		if (x != 0) {
 			velocity.x = speed * x;
 		}
@@ -132,19 +134,15 @@ public class Player implements Disposable {
 
 		float oldX = getX(), oldY = getY();
 		boolean collisionX = false, collisionY = false;
-
+		float a = velocity.x, b = velocity.y;
 
 		setX(getX() + velocity.x * delta);
 		if (velocity.x < 0) {
 			collisionX = leftCol();
-			right = false;
 		} else if (velocity.x > 0) {
 			collisionX = rightCol();
-			right = true;
-		} else {
-			stat = State.STAND;
 		}
-
+		
 		if (collisionX) {
 			setX(oldX);
 			velocity.x = 0;
@@ -154,12 +152,8 @@ public class Player implements Disposable {
 
 		if (velocity.y < 0) {
 			canJump = collisionY = downCol();
-			if (!canJump) {
-				stat = State.FALL;
-			}
 		} else if (velocity.y > 0) {
 			collisionY = upCol();
-			stat = State.JUMP;
 		}
 
 		if (collisionY) {
@@ -168,6 +162,43 @@ public class Player implements Disposable {
 		}
 		
 		velocity.x = 0;
+		
+		if (a > 0 && canJump && b < 0) {
+			if (stat != State.WALK || !right) {
+				stat = State.WALK;
+				right = true;
+				time = 0;
+			}
+		}
+		if (a < 0 && canJump && b < 0) {
+			if (stat != State.WALK || right) {
+				stat = State.WALK;
+				right = false;
+				time = 0;
+			}
+		}
+		//if (b < 0 && !canJump) {
+		//	if (stat != State.FALL) {
+		//		time = 0;
+		//		stat = State.FALL;
+		//	}
+		//	if (a != 0) {
+		//		right = (a > 0);
+		//	}
+		//}
+		if (b > 0) {
+			if (stat != State.JUMP) {
+				time = 0;
+				stat = State.JUMP;
+			}
+			if (a != 0) {
+				right = (a > 0);
+			}
+		}
+		if (canJump && a == 0 && stat != State.STAND) {
+			time = 0;
+			stat = State.STAND;
+		}
 	}
 
 	private void setY(float f) {
@@ -200,7 +231,26 @@ public class Player implements Disposable {
 	}
 
 	public void draw(Batch batch) {
-		batch.draw(idle.getKeyFrame(time), X, Y, WIDTH, HEIGHT);
+		TextureRegion frame = null;
+		switch(stat) {
+		case STAND:
+			frame = idle.getKeyFrame(time);
+			break;
+		case FALL:
+			frame = fall.getKeyFrame(time);
+			break;
+		case WALK:
+			frame = walk.getKeyFrame(time);
+			break;
+		case JUMP:
+			frame = jump.getKeyFrame(time);
+			break;
+		}
+		if(right) {
+			batch.draw(frame, X, Y, WIDTH, HEIGHT);
+		} else {
+			batch.draw(frame, X + WIDTH, Y, -WIDTH, HEIGHT);
+		}
 	}
 	
 }
