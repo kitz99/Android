@@ -2,6 +2,21 @@
 <map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="16" tileheight="16">
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" spacing="1" margin="1">
   <image source="tiles.png" width="343" height="410"/>
+  <tile id="87">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="88">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="89">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
   <tile id="312">
    <properties>
     <property name="blocked" value=""/>
@@ -35,7 +50,7 @@
  </tileset>
  <layer name="Tile Layer 1" width="50" height="50">
   <data encoding="base64" compression="zlib">
-   eJztw9ENABAQBbBnLMyA/bdxM/iTtEkTAAAAAAAAAAAAXvSWjM/Puur+/KkX5Cka9Q==
+   eJzt07ENACAMA8GMCew/CKFgByzupG9TOVUAAAAAAAAAAPlGN7v1yB3+YjekuxtO7vzfBg0JFIQ=
   </data>
  </layer>
 </map>

@@ -177,15 +177,15 @@ public class Player implements Disposable {
 				time = 0;
 			}
 		}
-		// if (b < 0 && !canJump) {
-		// if (stat != State.FALL) {
-		// time = 0;
-		// stat = State.FALL;
-		// }
-		// if (a != 0) {
-		// right = (a > 0);
-		// }
-		// }
+//		 if (b < 0 && !canJump) {
+//		 if (stat != State.FALL) {
+//		 time = 0;
+//		 stat = State.FALL;
+//		 }
+//		 if (a != 0) {
+//		 right = (a > 0);
+//		 }
+//		 }
 		if (b > 0) {
 			if (stat != State.JUMP) {
 				time = 0;
