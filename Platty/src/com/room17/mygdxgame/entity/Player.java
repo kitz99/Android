@@ -114,11 +114,11 @@ public class Player implements Disposable {
 		return false;
 	}
 
-	public void update(float delta, float x, float y) {
+	public void update(float delta, float x, float y, boolean aPress) {
 		time += delta;
 		velocity.y -= gravity * delta;
 
-		if (canJump && Gdx.input.isKeyPressed(Keys.SPACE)) {
+		if (canJump && (Gdx.input.isKeyPressed(Keys.SPACE) || aPress)) {
 			velocity.y = speed / 1.7f;
 			canJump = false;
 		}

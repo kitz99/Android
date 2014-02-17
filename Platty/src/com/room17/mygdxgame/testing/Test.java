@@ -4,11 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.room17.mygdxgame.entity.Player;
 import com.room17.mygdxgame.logic.Ctrl;
 
@@ -20,13 +23,16 @@ public class Test implements Screen {
 	private Ctrl myCtrl;
 	private Stage stage;
 	private Player play;
+	
+	private Button btn1;
+	private Button btn2;
 
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0.294f, 0.294f, 0.294f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		float d = Gdx.graphics.getDeltaTime();
-		play.update(d, myCtrl.getX(), myCtrl.getY());
+		play.update(d, myCtrl.getX(), myCtrl.getY(), btn1.isPressed());
 		camera.position.x = play.getX();
 		camera.update();
 
@@ -58,6 +64,17 @@ public class Test implements Screen {
 		stage.addActor(myCtrl.getTouch());
 		Gdx.input.setInputProcessor(stage);
 		play = new Player(32, 32, (TiledMapTileLayer) map.getLayers().get(0));
+		
+		Skin a = new Skin();
+		a.add("a", new Texture("sprites/A.png"));
+		a.add("b", new Texture("sprites/B.png"));
+		btn1 = new Button(a.getDrawable("a"), a.getDrawable("b"));
+		
+		btn2 = new Button(a.getDrawable("b"), a.getDrawable("a"));
+		btn1.setPosition(600, 15);
+		btn2.setPosition(700, 15);
+		stage.addActor(btn2);
+		stage.addActor(btn1);
 	}
 
 	@Override
