@@ -16,7 +16,7 @@ public class Player implements Disposable {
 	private float HEIGHT = 32f, WIDTH = 32f;
 	private float speed = 60 * 2, gravity = 60 * 1.8f;
 	private float X, Y;
-	boolean canJump, right;
+	boolean canJump, right, punching;
 	private Vector2 velocity;
 	private State stat;
 
@@ -24,6 +24,7 @@ public class Player implements Disposable {
 	private Animation walk;
 	private Animation jump;
 	private Animation fall;
+	private Animation punch;
 
 	private float time;
 
@@ -68,6 +69,13 @@ public class Player implements Disposable {
 		}
 		fall = new Animation(rate, myV);
 		fall.setPlayMode(Animation.LOOP);
+
+		myV = new TextureRegion[3];
+		for (int i = 0; i < 3; i++) {
+			myV[i] = myArr[6][i];
+		}
+		punch = new Animation(0.10f, myV);
+		punch.setPlayMode(Animation.NORMAL);
 
 		canJump = true;
 		right = true;
@@ -114,9 +122,16 @@ public class Player implements Disposable {
 		return false;
 	}
 
-	public void update(float delta, float x, float y, boolean aPress) {
+	public void update(float delta, float x, float y, boolean aPress,
+			boolean bPress) {
+		//System.out.println(0.1f + 0.2f == 0.3f);
 		time += delta;
 		velocity.y -= gravity * delta;
+
+		if ((bPress || Gdx.input.isKeyPressed(Keys.P)) && !punching) {
+			punching = true;
+			time = 0;
+		}
 
 		if (canJump && (Gdx.input.isKeyPressed(Keys.SPACE) || aPress)) {
 			velocity.y = speed / 1.7f;
@@ -163,46 +178,52 @@ public class Player implements Disposable {
 
 		velocity.x = 0;
 
-		if (a > 0 && canJump && b < 0) {
-			if (stat != State.WALK || !right) {
-				stat = State.WALK;
-				right = true;
+		if (!punching) {
+			if (a > 0 && canJump && b < 0) {
+				if (stat != State.WALK || !right) {
+					stat = State.WALK;
+					right = true;
+					time = 0;
+				}
+			}
+			if (a < 0 && canJump && b < 0) {
+				if (stat != State.WALK || right) {
+					stat = State.WALK;
+					right = false;
+					time = 0;
+				}
+			}
+
+			// if (b < 0 && !canJump) {
+			// if (stat != State.FALL) {
+			// time = 0;
+			// stat = State.FALL;
+			// }
+			// if (a != 0) {
+			// right = (a > 0);
+			// }
+			// }
+
+			if (b > 0) {
+				if (stat != State.JUMP) {
+					time = 0;
+					stat = State.JUMP;
+				}
+				if (a != 0) {
+					right = (a > 0);
+				}
+			}
+			if (b < 0 && stat == State.JUMP) {
+				if (a != 0) {
+					right = (a > 0);
+				}
+			}
+			if (canJump && a == 0 && stat != State.STAND) {
 				time = 0;
+				stat = State.STAND;
 			}
-		}
-		if (a < 0 && canJump && b < 0) {
-			if (stat != State.WALK || right) {
-				stat = State.WALK;
-				right = false;
-				time = 0;
-			}
-		}
-//		 if (b < 0 && !canJump) {
-//		 if (stat != State.FALL) {
-//		 time = 0;
-//		 stat = State.FALL;
-//		 }
-//		 if (a != 0) {
-//		 right = (a > 0);
-//		 }
-//		 }
-		if (b > 0) {
-			if (stat != State.JUMP) {
-				time = 0;
-				stat = State.JUMP;
-			}
-			if (a != 0) {
-				right = (a > 0);
-			}
-		}
-		if (b < 0 && stat == State.JUMP) {
-			if (a != 0) {
-				right = (a > 0);
-			}
-		}
-		if (canJump && a == 0 && stat != State.STAND) {
-			time = 0;
-			stat = State.STAND;
+		} else {
+			stat = State.PUNCH;
 		}
 	}
 
@@ -249,6 +270,12 @@ public class Player implements Disposable {
 			break;
 		case JUMP:
 			frame = jump.getKeyFrame(time);
+			break;
+		case PUNCH:
+			frame = punch.getKeyFrame(time);
+			if (punch.isAnimationFinished(time)) {
+				punching = false;
+			}
 			break;
 		}
 		if (right) {

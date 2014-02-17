@@ -16,14 +16,14 @@ import com.room17.mygdxgame.entity.Player;
 import com.room17.mygdxgame.logic.Ctrl;
 
 public class Test implements Screen {
-	
+
 	private TiledMap map;
 	private OrthogonalTiledMapRenderer renderer;
 	private OrthographicCamera camera;
 	private Ctrl myCtrl;
 	private Stage stage;
 	private Player play;
-	
+
 	private Button btn1;
 	private Button btn2;
 
@@ -32,13 +32,14 @@ public class Test implements Screen {
 		Gdx.gl.glClearColor(0.294f, 0.294f, 0.294f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		float d = Gdx.graphics.getDeltaTime();
-		play.update(d, myCtrl.getX(), myCtrl.getY(), btn1.isPressed());
+		play.update(d, myCtrl.getX(), myCtrl.getY(), btn1.isPressed(),
+				btn2.isPressed());
 		camera.position.x = play.getX();
 		camera.update();
 
 		renderer.setView(camera);
 		renderer.render();
-		
+
 		renderer.getSpriteBatch().begin();
 		play.draw(renderer.getSpriteBatch());
 		renderer.getSpriteBatch().end();
@@ -64,17 +65,17 @@ public class Test implements Screen {
 		stage.addActor(myCtrl.getTouch());
 		Gdx.input.setInputProcessor(stage);
 		play = new Player(32, 32, (TiledMapTileLayer) map.getLayers().get(0));
-		
+
 		Skin a = new Skin();
 		a.add("a", new Texture("sprites/A.png"));
 		a.add("b", new Texture("sprites/B.png"));
 		btn1 = new Button(a.getDrawable("a"), a.getDrawable("b"));
-		
+
 		btn2 = new Button(a.getDrawable("b"), a.getDrawable("a"));
 		btn1.setPosition(600, 15);
 		btn2.setPosition(700, 15);
-		stage.addActor(btn2);
 		stage.addActor(btn1);
+		stage.addActor(btn2);
 	}
 
 	@Override
