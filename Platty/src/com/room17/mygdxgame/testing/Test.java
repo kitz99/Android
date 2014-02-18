@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -16,7 +17,9 @@ import com.room17.mygdxgame.entity.Player;
 import com.room17.mygdxgame.logic.Ctrl;
 
 public class Test implements Screen {
-
+	private SpriteBatch batch;
+	private Texture bground;
+	
 	private TiledMap map;
 	private OrthogonalTiledMapRenderer renderer;
 	private OrthographicCamera camera;
@@ -26,16 +29,27 @@ public class Test implements Screen {
 
 	private Button btn1;
 	private Button btn2;
+	
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0.294f, 0.294f, 0.294f, 1f);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		float d = Gdx.graphics.getDeltaTime();
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		batch.begin();
+		batch.disableBlending();
+		batch.draw(bground, -play.getX(), 0);
+		batch.enableBlending();
+		batch.end();
+		
 		play.update(d, myCtrl.getX(), myCtrl.getY(), btn1.isPressed(),
 				btn2.isPressed());
+		
 		camera.position.x = play.getX();
+		//camera.position.y = play.getY();
 		camera.update();
+		
 
 		renderer.setView(camera);
 		renderer.render();
@@ -54,6 +68,8 @@ public class Test implements Screen {
 
 	@Override
 	public void show() {
+		batch = new SpriteBatch();
+		bground = new Texture("maps/background.png");
 		map = new TmxMapLoader().load("maps/map.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map);
 		camera = new OrthographicCamera();
@@ -64,7 +80,7 @@ public class Test implements Screen {
 				true, renderer.getSpriteBatch());
 		stage.addActor(myCtrl.getTouch());
 		Gdx.input.setInputProcessor(stage);
-		play = new Player(32, 32, (TiledMapTileLayer) map.getLayers().get(0));
+		play = new Player(32, 64, (TiledMapTileLayer) map.getLayers().get(0));
 
 		Skin a = new Skin();
 		a.add("a", new Texture("sprites/A.png"));
@@ -72,8 +88,8 @@ public class Test implements Screen {
 		btn1 = new Button(a.getDrawable("a"), a.getDrawable("b"));
 
 		btn2 = new Button(a.getDrawable("b"), a.getDrawable("a"));
-		btn1.setPosition(600, 15);
-		btn2.setPosition(700, 15);
+		btn1.setPosition(600, 25);
+		btn2.setPosition(700, 25);
 		stage.addActor(btn1);
 		stage.addActor(btn2);
 	}

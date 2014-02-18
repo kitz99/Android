@@ -1,13 +1,12 @@
 package com.room17.mygdxgame;
 
 import com.badlogic.gdx.Game;
-import com.room17.mygdxgame.testing.Test;
 
 public class MyGame extends Game {
 	
 	@Override
 	public void create() {
-		this.setScreen(new Test());
+		this.setScreen(new Splash());
 	}
 
 	@Override

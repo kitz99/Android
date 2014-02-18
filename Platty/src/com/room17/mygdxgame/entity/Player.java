@@ -26,11 +26,13 @@ public class Player implements Disposable {
 	private Animation fall;
 	private Animation punch;
 
-	private float time;
+	private float time, increment;
 
 	private TiledMapTileLayer collisionLayer;
 
 	private Texture pText;
+	
+	private String blockedKey = "blocked";
 
 	public Player(float a, float b, TiledMapTileLayer aux) {
 		int row = 9, col = 6;
@@ -85,46 +87,43 @@ public class Player implements Disposable {
 		time = 0;
 	}
 
-	private boolean isBlocked(float x, float y) {
-		Cell cell = collisionLayer.getCell(
-				(int) (x / collisionLayer.getTileWidth()),
-				(int) (y / collisionLayer.getTileHeight()));
-		return cell != null && cell.getTile() != null
-				&& cell.getTile().getProperties().containsKey("blocked");
+	private boolean isCellBlocked(float x, float y) {
+		Cell cell = collisionLayer.getCell((int) (x / collisionLayer.getTileWidth()), (int) (y / collisionLayer.getTileHeight()));
+		return cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey(blockedKey);
 	}
 
-	private boolean rightCol() {
-		for (float step = 0; step < getHeight(); step += 1f)
-			if (isBlocked(getX() + getWidth(), getY() + step))
+	public boolean collidesRight() {
+		for(float step = 0; step <= getHeight(); step += increment)
+			if(isCellBlocked(getX() + getWidth(), getY() + step))
 				return true;
 		return false;
 	}
 
-	private boolean leftCol() {
-		for (float step = 0; step < getHeight(); step += 1f)
-			if (isBlocked(getX(), getY() + step))
+	public boolean collidesLeft() {
+		for(float step = 0; step <= getHeight(); step += increment)
+			if(isCellBlocked(getX(), getY() + step))
 				return true;
 		return false;
 	}
 
-	private boolean upCol() {
-		for (float step = 0; step < getWidth(); step += 1f)
-			if (isBlocked(getX() + step, getY() + getHeight()))
+	public boolean collidesTop() {
+		for(float step = 0; step <= getWidth(); step += increment)
+			if(isCellBlocked(getX() + step, getY() + getHeight()))
 				return true;
 		return false;
 
 	}
 
-	private boolean downCol() {
-		for (float step = 0; step < getWidth(); step += 1f)
-			if (isBlocked(getX() + step, getY()))
+	public boolean collidesBottom() {
+		for(float step = 0; step <= getWidth(); step += increment)
+			if(isCellBlocked(getX() + step, getY()))
 				return true;
 		return false;
 	}
 
 	public void update(float delta, float x, float y, boolean aPress,
 			boolean bPress) {
-		//System.out.println(0.1f + 0.2f == 0.3f);
+		// System.out.println(0.1f + 0.2f == 0.3f);
 		time += delta;
 		velocity.y -= gravity * delta;
 
@@ -137,9 +136,8 @@ public class Player implements Disposable {
 			velocity.y = speed / 1.7f;
 			canJump = false;
 		}
-		if (x != 0) {
-			velocity.x = speed * x;
-		}
+
+		velocity.x = speed * x;
 
 		if (velocity.y > speed) {
 			velocity.y = speed;
@@ -152,11 +150,12 @@ public class Player implements Disposable {
 		float a = velocity.x, b = velocity.y;
 
 		setX(getX() + velocity.x * delta);
-		if (velocity.x < 0) {
-			collisionX = leftCol();
-		} else if (velocity.x > 0) {
-			collisionX = rightCol();
-		}
+		increment = collisionLayer.getTileWidth();
+		increment = getWidth() < increment ? getWidth() / 2 : increment / 2;
+		if (velocity.x < 0) // going left
+			collisionX = collidesLeft();
+		else if (velocity.x > 0) // going right
+			collisionX = collidesRight();
 
 		if (collisionX) {
 			setX(oldX);
@@ -164,12 +163,12 @@ public class Player implements Disposable {
 		}
 
 		setY(getY() + velocity.y * delta * 5f);
-
-		if (velocity.y < 0) {
-			canJump = collisionY = downCol();
-		} else if (velocity.y > 0) {
-			collisionY = upCol();
-		}
+		increment = collisionLayer.getTileHeight();
+		increment = getHeight() < increment ? getHeight() / 2 : increment / 2;
+		if (velocity.y < 0) // going down
+			canJump = collisionY = collidesBottom();
+		else if (velocity.y > 0) // going up
+			collisionY = collidesTop();
 
 		if (collisionY) {
 			setY(oldY);
@@ -239,7 +238,7 @@ public class Player implements Disposable {
 		return X;
 	}
 
-	private float getY() {
+	public float getY() {
 		return Y;
 	}
 
