@@ -126,6 +126,13 @@ public class Player implements Disposable {
 		// System.out.println(0.1f + 0.2f == 0.3f);
 		time += delta;
 		velocity.y -= gravity * delta;
+		
+		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+			x = -1;
+		}
+		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+			x = 1;
+		}
 
 		if ((bPress || Gdx.input.isKeyPressed(Keys.P)) && !punching) {
 			punching = true;

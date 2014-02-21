@@ -50,7 +50,8 @@ public class Test implements Screen {
 		//camera.position.y = play.getY();
 		camera.update();
 		
-
+		
+		
 		renderer.setView(camera);
 		renderer.render();
 
@@ -70,6 +71,7 @@ public class Test implements Screen {
 	public void show() {
 		batch = new SpriteBatch();
 		bground = new Texture("maps/background.png");
+		bground.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 		map = new TmxMapLoader().load("maps/map.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map);
 		camera = new OrthographicCamera();
