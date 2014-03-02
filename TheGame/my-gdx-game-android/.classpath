@@ -11,5 +11,6 @@
 	<classpathentry exported="true" kind="lib" path="/my-gdx-game/libs/tween-engine-api.jar" sourcepath="/my-gdx-game/libs/tween-engine-api-sources.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="lib" path="libs/shaker.jar"/>
+	<classpathentry kind="lib" path="libs/walker.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
