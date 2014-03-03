@@ -170,7 +170,7 @@ public class MainActivity extends AndroidApplication {
 			switch (msg.what) {
 			case STEPS_MSG:
 				mStepValue = (int) msg.arg1;
-				System.out.println("yay");
+				System.out.println("" + mStepValue);
 				break;
 			default:
 				super.handleMessage(msg);
